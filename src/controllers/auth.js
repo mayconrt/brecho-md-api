@@ -1,4 +1,5 @@
 const firestore = require('../resources/credentials/firestore/connection')
+const bcrypt = require('bcrypt')
 
 const jwt = require('jsonwebtoken')
 const authconfig = require('../resources/credentials/auth/auth.json')
@@ -24,9 +25,12 @@ const authconfig = require('../resources/credentials/auth/auth.json')
             .then((snapshot) => {
                 if(snapshot.size == 0)
                     return response.status(404).json({message: "User not found"})
-                
-                snapshot.forEach((doc) => {
-                    if(userName == doc.data().userName && password == doc.data().password){
+                    
+                snapshot.forEach( async (doc) => {
+                    
+                    const passValidate = await bcrypt.compare(password, doc.data().password)
+
+                    if(userName == doc.data().userName && passValidate ){
                         const token = genarateToken(userName)
 
                         return response.status(200).json({data: doc.data(), token})   

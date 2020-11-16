@@ -8,7 +8,7 @@ router.use(authMiddleware)
 router.get('/', auth.find)
 router.get('/:userName', auth.findOne)
 router.post('/', auth.create)
-router.patch('/:userName', auth.update)
-router.delete('/:userName', auth.delete)
+router.patch('/', auth.update)
+router.delete('/:userName', auth.remove)
 
 module.exports = router
