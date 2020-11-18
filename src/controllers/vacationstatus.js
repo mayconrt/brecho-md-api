@@ -1,5 +1,5 @@
 const firestore = require('../resources/credentials/firestore/connection')
-const pass = require('./util/password')
+const pass = require('../util/password')
 
 
 async function find(request, response) {
