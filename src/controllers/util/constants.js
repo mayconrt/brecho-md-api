@@ -16,4 +16,14 @@ const erroMsg = {
     TABLENOT: "Table does not exists"
 }
 
-module.exports = {httpMsg, erroMsg}
+const resultNotFoud = { data: { data: [], message: httpMsg.NOTFOUND }, code: 404 }
+const resultMadatory = { data: { data: [], message: erroMsg.MANDATORY }, code: 500 }
+const resultNotExists = { data: { data: [], message: erroMsg.TABLENOT }, code: 500 }
+
+module.exports = 
+    {httpMsg, 
+    erroMsg,
+    resultNotFoud,
+    resultMadatory,
+    resultNotExists
+}

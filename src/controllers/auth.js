@@ -1,4 +1,4 @@
-const firestore = require('../resources/credentials/firestore/connection')
+const firestore = require('../database/connection')
 const bcrypt = require('bcrypt')
 
 const jwt = require('jsonwebtoken')
