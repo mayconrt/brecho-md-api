@@ -1,5 +1,4 @@
 module.exports = {
-
   development: {
     client: 'mysql',
     connection: 'mysql://b013fe1c605cb9:26a9becd@us-cdbr-east-02.cleardb.com/heroku_d71fda90a83dacf?reconnect=true',
@@ -12,7 +11,6 @@ module.exports = {
     },
     useNullAsDefault: true,
   }    
-
   // development: {
   //   client: "postgres",
   //   connection: {
