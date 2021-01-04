@@ -90,7 +90,6 @@ async function remove(request, response) {
 
 async function selectOrders(request, response) {
     try {
-console.log('teste')
         const result = await connection("sales_order")
             .join("client", "sales_order.idClient", "client.id")
             .join("product", "sales_order.idProduct", "product.id")
@@ -101,7 +100,6 @@ console.log('teste')
                     "product.name as productName",
                     "product.price as price"
                     )
-                    console.log(result)
         if (result.length == 0) {
             response.status(404).json({ data: result, message: httpMsg.NOTFOUND })
         }

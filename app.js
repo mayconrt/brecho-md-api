@@ -17,7 +17,7 @@ app.use(allowCors)
 app.use('/auth', auth)
 app.use('/product', product)
 app.use('/client', client)
-app.use('/order', order)
+app.use('/sales-order', order)
 app.use('/purchase-order', purchaseOrder)
 
 app.use((req, res, next) => {
