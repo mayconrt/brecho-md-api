@@ -6,7 +6,7 @@ const allowCors = require('./src/middleware/cors')
 const auth = require('./src/routes/auth')
 const product = require('./src/routes/product')
 const client = require('./src/routes/client')
-const order = require('./src/routes/order')
+const order = require('./src/routes/salesOrder')
 const purchaseOrder = require('./src/routes/purchaseOrder')
 
 

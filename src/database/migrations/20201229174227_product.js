@@ -5,7 +5,7 @@ exports.up = function(knex) {
         table.increments('id').primary();
         table.string('name').unique().notNullable();
         table.string('description').notNullable();
-        table.string('quantity').notNullable();
+        table.integer('quantity').notNullable();
         table.float('price', 10, 2).notNullable();
         table.timestamp('createdAt').defaultTo(knex.fn.now());
         table.timestamp('updatedAt').defaultTo(knex.fn.now());

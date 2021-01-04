@@ -104,6 +104,22 @@ async function selectOrders(request, response) {
     }
 }
 
+async function getSumary(request, response) {
+  
+    try {
+
+        const [result] = await connection("purchase_order")
+            .sum({totalPurchase: 'total_value'})
+        if (result.length == 0) {
+            return resultNotFoud
+        }
+        response.status(200).json({ data: result, message: httpMsg.FOUND })
+
+    } catch (error) {
+        response.status(500).json({ data: [], message: validate.getMessageError(error) })
+    }
+}
+
 
 module.exports = {
     find,
@@ -111,5 +127,6 @@ module.exports = {
     create,
     update,
     remove,
-    selectOrders
+    selectOrders,
+    getSumary
 }

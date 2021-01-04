@@ -15,6 +15,7 @@ const multer = Multer({
 
 
 router.get('/', product.find)
+router.get('/sumary', product.getSumary)
 router.get('/:id', product.findOne)
 router.post('/', product.create)
 router.patch('/:productId', product.update)

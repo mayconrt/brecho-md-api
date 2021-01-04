@@ -105,6 +105,23 @@ async function decrementQuantity(idProduct, quantity) {
 
 }
 
+async function getSumary(request, response) {
+  
+    try {
+
+        const [result] = await connection("product")
+            .sum({totalQuantity: 'quantity', totalPrice: 'price'})
+            // .sum('price')
+        if (result.length == 0) {
+            return resultNotFoud
+        }
+        response.status(200).json({ data: result, message: httpMsg.FOUND })
+
+    } catch (error) {
+        response.status(500).json({ data: [], message: validate.getMessageError(error) })
+    }
+}
+
 
 module.exports = {
     find,
@@ -114,4 +131,5 @@ module.exports = {
     remove,
     incrementQuantity,
     decrementQuantity,
+    getSumary
 }

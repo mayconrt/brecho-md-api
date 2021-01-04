@@ -1,7 +1,7 @@
 const express = require('express')
 const Multer = require('multer');
 const router = express.Router()
-const order = require('../controllers/order')
+const order = require('../controllers/salesOrder')
 const authMiddleware = require('../middleware/auth')
 
 //router.use(authMiddleware)
@@ -16,6 +16,7 @@ const multer = Multer({
 
 router.get('/', order.find)
 router.get('/all', order.selectOrders)
+router.get('/sumary', order.getSumary)
 router.get('/:id', order.findOne)
 router.post('/', order.create)
 router.patch('/:orderId', order.update)

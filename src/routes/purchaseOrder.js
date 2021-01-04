@@ -16,6 +16,7 @@ const multer = Multer({
 
 router.get('/', purchaseOrder.find)
 router.get('/all', purchaseOrder.selectOrders)
+router.get('/sumary', purchaseOrder.getSumary)
 router.get('/:id', purchaseOrder.findOne)
 router.post('/', purchaseOrder.create)
 router.patch('/:purchaseOrderId', purchaseOrder.update)
