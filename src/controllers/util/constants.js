@@ -1,19 +1,22 @@
 const httpMsg = {
-    NOTFOUND: "Record not found.",
-    FOUND: "Record found success.",
-    CREATED: "Record created.",
-    UPDATED: "Record updated.",
-    DELETED: "Record deleted.",
-    NOTPROCESS: "Record not processed"
+    NOTFOUND: "Registro não encontrado.",
+    FOUND: "Registro encontrado com sucesso.",
+    CREATED: "Registro criado com sucesso.",
+    UPDATED: "Registro atualizado com sucesso.",
+    DELETED: "Registro excluído com sucesso.",
+    NOTPROCESS: "Record not processed",
+    QTDEINDISPONIVEL: "Quantidade do produto insuficiente para realizar o pedido",
+    QTDESMALLER: "Quantidade não pode ser menor que um.",
+    PRICESMALLER: "Valor não pode ser menor que um."
 }
 
 const erroMsg = {
-    UNKNOWN: "Unknown error.",
-    MANDATORY: "Mandatory field not informed.",
-    ALREADY: "Rocord already exists",
-    UNIQUE: "Another record already exists with the same unique field.",
-    INVALIDFORMAT: "Invalid format",
-    TABLENOT: "Table does not exists"
+    UNKNOWN: "Erro desconhecido.",
+    MANDATORY: "Campos obrigatórios não preenchidos.",
+    ALREADY: "Registro já existe",
+    UNIQUE: "Já existe um outro registro com as mesmas chaves.",
+    INVALIDFORMAT: "Formato invalido",
+    TABLENOT: "Tabela não existe"
 }
 
 const resultNotFoud = { data: { data: [], message: httpMsg.NOTFOUND }, code: 404 }

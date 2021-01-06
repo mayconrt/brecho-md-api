@@ -1,9 +1,9 @@
 const connection = require('../../database/connection')
-const { httpMsg, 
-        erroMsg,  
-        resultNotFoud, 
-        resultMadatory, 
-        resultNotExists} = require('./constants')
+const { httpMsg,
+    erroMsg,
+    resultNotFoud,
+    resultMadatory,
+    resultNotExists } = require('./constants')
 
 const validate = require('./validate')
 
@@ -28,14 +28,14 @@ async function selectOne(table, id) {
 
     try {
 
-        const result = await connection(table)
+        const [result] = await connection(table)
             .where({ 'id': id })
             .select('*')
 
         if (result.length == 0) {
             return resultNotFoud
         }
-
+        
         return { data: { data: result, message: httpMsg.FOUND }, code: 200 }
 
     } catch (error) {
@@ -46,33 +46,43 @@ async function selectOne(table, id) {
 async function create(table, data) {
     try {
 
+        Object.keys(data).forEach(function (item) {
+            if (!data[item]) {
+                return resultMadatory
+            }
+        });
+
         if (!table)
             return resultNotExists
-
-        if (!data)
-            return resultMadatory
 
         const result = await connection(table).insert(data)
 
         if (result) {
             return { data: { data: { id: result.id }, message: httpMsg.CREATED }, code: 200 }
         } else {
-            return { data: { data: [], message: httpMsg.NOTPROCESS }, code: 500 }
+            return { data: { data: [], message: httpMsg.NOTPROCESS }, code: 204 }
         }
 
     } catch (error) {
-        return { data: { data: [], message: validate.getMessageError(error) }, code: 500 }
+        return { data: { data: [], message: validate.getMessageError(error) }, code: 400 }
     }
 }
 
 async function update(table, data, id) {
 
     try {
+
+        if (!id)
+            return resultMadatory
+
+        Object.keys(data).forEach(function (item) {
+            if (!data[item]) {
+                return resultMadatory
+            }
+        });
+
         if (!table)
             return resultNotExists
-
-        if (!data || !id)
-            return resultMadatory
 
         const result = await connection(table)
             .where('id', id)
@@ -95,7 +105,7 @@ async function remove(table, id) {
 
     try {
         if (!id)
-            return { data: { data: [], message: erroMsg.MANDATORY }, code: 500 }
+            return resultMadatory
 
         const result = await connection(table)
             .where({ 'id': id })

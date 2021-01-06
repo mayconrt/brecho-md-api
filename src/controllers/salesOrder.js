@@ -5,7 +5,7 @@ const { httpMsg, resultNotFoud } = require('./util/constants')
 
 const validate = require('./util/validate')
 
-const product = require('./product')
+const productAPI = require('./product')
 
 async function find(request, response) {
 
@@ -41,12 +41,25 @@ async function create(request, response) {
         total_value
     }
 
-    const result = await query.create('sales_order', order)
-    
-    if (result.code == 200)
-        await product.decrementQuantity(order.idProduct, order.quantity)
+    if (order.quantity && order.quantity < 1) {
+        response.status(400).json({ data: [], message: httpMsg.QTDESMALLER })
+    } {
+        const product = await query.selectOne('product', order.idProduct)
 
-    return response.status(result.code).json(result.data)
+        if (order.quantity > product.data.data.quantity) {
+            response.status(400).json({ data: [], message: httpMsg.QTDEINDISPONIVEL })
+        } else {
+
+            const result = await query.create('sales_order', order)
+
+            if (result.code == 200) {
+                await productAPI.decrementQuantity(order.idProduct, order.quantity)
+            }
+
+            return response.status(result.code).json(result.data)
+
+        }
+    }
 
 }
 
@@ -69,20 +82,35 @@ async function update(request, response) {
         discount_value,
         total_value
     }
-    
-    const result = await query.update('sales_order', order, orderId)
 
-    return response.status(result.code).json(result.data)
+    if (order.quantity && order.quantity < 1) {
+        response.status(400).json({ data: [], message: httpMsg.QTDESMALLER })
+    } {
 
+        const product = await query.selectOne('product', order.idProduct)
+
+        if (order.quantity > product.data.data.quantity) {
+            response.status(400).json({ data: [], message: httpMsg.QTDEINDISPONIVEL })
+        } else {
+
+            const result = await query.update('sales_order', order, orderId)
+
+            return response.status(result.code).json(result.data)
+
+        }
+
+    }
 }
 
 async function remove(request, response) {
 
     const { orderId } = request.params
+    const order = await query.selectOne('sales_order', orderId)
+
     const result = await query.remove('sales_order', orderId)
 
     if (result.code == 200)
-        await product.incrementQuantity(order.idProduct, order.quantity)
+        await productAPI.incrementQuantity(order.data.data.idProduct, order.data.data.quantity)
 
     return response.status(result.code).json(result.data)
 
@@ -93,17 +121,19 @@ async function selectOrders(request, response) {
         const result = await connection("sales_order")
             .join("client", "sales_order.idClient", "client.id")
             .join("product", "sales_order.idProduct", "product.id")
-            .select("sales_order.*", 
-                    "client.id as clientId", 
-                    "client.name as clientName",                     
-                    "product.id as productId",
-                    "product.name as productName",
-                    "product.price as price"
-                    )
+            .select("sales_order.*",
+                "client.id as clientId",
+                "client.name as clientName",
+                "product.id as productId",
+                "product.name as productName",
+                "product.price as price"
+            )
+
         if (result.length == 0) {
             response.status(404).json({ data: result, message: httpMsg.NOTFOUND })
+        } else {
+            response.status(200).json({ data: result, message: httpMsg.FOUND })
         }
-        response.status(200).json({ data: result, message: httpMsg.FOUND })
 
     } catch (error) {
         response.status(500).json({ data: [], message: validate.getMessageError(error) })
@@ -111,11 +141,11 @@ async function selectOrders(request, response) {
 }
 
 async function getSumary(request, response) {
-  
+
     try {
 
         const [result] = await connection("sales_order")
-            .sum({totalSales: 'total_value'})
+            .sum({ totalSales: 'total_value' })
         if (result.length == 0) {
             return resultNotFoud
         }

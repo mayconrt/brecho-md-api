@@ -1,11 +1,11 @@
 const query = require('./util/queryExecute')
 const connection = require('../database/connection')
-const { httpMsg} = require('./util/constants')
+const { httpMsg } = require('./util/constants')
 
 const validate = require('./util/validate')
 
 async function find(request, response) {
-  
+
     const result = await query.selectAll('product')
 
     return response.status(result.code).json(result.data)
@@ -20,26 +20,31 @@ async function findOne(request, response) {
 }
 
 async function create(request, response) {
-    const result = await query.create('product', request.body )
 
-    return response.status(result.code).json(result.data)
+    if (request.body.price && request.body.price < 1) {
+        response.status(400).json({ data: [], message: httpMsg.PRICESMALLER })
+    } else {
+        const result = await query.create('product', request.body)
+
+        return response.status(result.code).json(result.data)
+    }
 
 }
 
 async function update(request, response) {
-    const {productId} = request.params
-    const  {
+    const { productId } = request.params
+    const {
         name,
         description,
         quantity,
         price
     } = request.body
 
-    const product = {name, description, quantity,price}
-    
-    
+    const product = { name, description, quantity, price }
+
+
     const result = await query.update('product', product, productId)
-    
+
     return response.status(result.code).json(result.data)
 
 }
@@ -47,7 +52,7 @@ async function update(request, response) {
 async function remove(request, response) {
 
     const { productId } = request.params
-    const result = await query.remove('product',  productId)
+    const result = await query.remove('product', productId)
 
     return response.status(result.code).json(result.data)
 
@@ -57,14 +62,14 @@ async function incrementQuantity(idProduct, quantity) {
 
     try {
         const [quantityProduct] = await connection("product")
-        .where({'id': parseInt(idProduct)})
-        .select('quantity')
-        
-        const quantityUpdated = quantityProduct.quantity + quantity
+            .where({ 'id': parseInt(idProduct) })
+            .select('quantity')
+
+        const quantityUpdated = parseInt(quantityProduct.quantity) + parseInt(quantity)
 
         const result = await connection("product")
-            .where({'id': idProduct})
-            .update({quantity: quantityUpdated})
+            .where({ 'id': idProduct })
+            .update({ quantity: quantityUpdated })
 
         if (result) {
             return { data: { data: { id: id }, message: httpMsg.UPDATED }, code: 200 }
@@ -83,14 +88,17 @@ async function decrementQuantity(idProduct, quantity) {
 
     try {
         const [quantityProduct] = await connection("product")
-        .where({'id': parseInt(idProduct)})
-        .select('quantity')
+            .where({ 'id': parseInt(idProduct) })
+            .select('quantity')
+
+        let quantityUpdated = parseInt(quantityProduct.quantity) - parseInt(quantity)
         
-        const quantityUpdated = quantityProduct.quantity - quantity
+        if (quantityUpdated < 0)
+            quantityUpdated = 0
 
         const result = await connection("product")
-            .where({'id': idProduct})
-            .update({quantity: quantityUpdated})
+            .where({ 'id': idProduct })
+            .update({ quantity: quantityUpdated })
 
         if (result) {
             return { data: { data: { id: id }, message: httpMsg.UPDATED }, code: 200 }
@@ -106,12 +114,12 @@ async function decrementQuantity(idProduct, quantity) {
 }
 
 async function getSumary(request, response) {
-  
+
     try {
 
         const [result] = await connection("product")
-            .sum({totalQuantity: 'quantity', totalPrice: 'price'})
-            // .sum('price')
+            .sum({ totalQuantity: 'quantity', totalPrice: 'price' })
+        // .sum('price')
         if (result.length == 0) {
             return resultNotFoud
         }
